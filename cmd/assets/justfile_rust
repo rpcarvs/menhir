@@ -23,7 +23,7 @@ audit:
     cargo audit
 
 # Run formatting, linting, audit, and vet
-ci: fmt lint audit vet
+ci: fmt lint audit
 
 # Build release binary after passing CI checks
 release: ci

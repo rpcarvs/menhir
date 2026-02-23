@@ -1,40 +1,61 @@
-/*
-Copyright © 2026 NAME HERE <EMAIL ADDRESS>
-
-*/
 package cmd
 
 import (
 	"fmt"
+	"os"
+	"os/exec"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 )
 
+var rsLibFlag bool
+
 // rustCmd represents the rust command
 var rustCmd = &cobra.Command{
-	Use:   "rust",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Use:   "rust [project_name]",
+	Short: "Scaffold a rust project using cargo",
+	Args:  cobra.ExactArgs(1),
+	RunE: func(cmd *cobra.Command, args []string) error {
+		projectName := args[0]
+		// default
+		style := "--bin"
+		if rsLibFlag {
+			style = "--lib"
+		}
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("rust called")
+		fmt.Println("Preparing your rust project...")
+
+		execCmd := exec.Command(
+			"cargo",
+			"init",
+			projectName,
+			style,
+		)
+
+		execCmd.Stdout = os.Stdout
+		execCmd.Stderr = os.Stderr
+
+		// executing the _cmd
+		if err := execCmd.Run(); err != nil {
+			return fmt.Errorf("failed to run cargo init for %q: %w", projectName, err)
+		}
+
+		// copying justfile
+		src := "assets/justfile_rust"
+		out := filepath.Join(projectName, "justfile")
+
+		if err := copyJustfile(assets, src, out); err != nil {
+			return err
+		}
+
+		return nil
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(rustCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// rustCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// rustCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rustCmd.Flags().BoolVar(&rsLibFlag, "lib", false, "Create a lib crate")
+	// this does nothing. Adding just for completness
+	rustCmd.Flags().Bool("bin", false, "Create a binary crate")
 }
