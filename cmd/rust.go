@@ -11,7 +11,6 @@ import (
 
 var rsLibFlag bool
 
-// rustCmd represents the rust command
 var rustCmd = &cobra.Command{
 	Use:   "rust [project_name]",
 	Short: "Scaffold a rust project using cargo",
@@ -36,7 +35,7 @@ var rustCmd = &cobra.Command{
 		execCmd.Stdout = os.Stdout
 		execCmd.Stderr = os.Stderr
 
-		// executing the _cmd
+		// executing the cmd
 		if err := execCmd.Run(); err != nil {
 			return fmt.Errorf("failed to run cargo init for %q: %w", projectName, err)
 		}
@@ -45,9 +44,11 @@ var rustCmd = &cobra.Command{
 		src := "assets/justfile_rust"
 		out := filepath.Join(projectName, "justfile")
 
-		if err := copyJustfile(assets, src, out); err != nil {
+		if err := copyEmbFile(assets, src, out); err != nil {
 			return err
 		}
+
+		fmt.Println("\nDone!!")
 
 		return nil
 	},

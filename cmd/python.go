@@ -14,7 +14,6 @@ var (
 	pyPackageFlag bool
 )
 
-// pythonCmd represents the python command
 var pythonCmd = &cobra.Command{
 	Use:   "python [project_name]",
 	Short: "Scaffold a python project using uv",
@@ -42,7 +41,7 @@ var pythonCmd = &cobra.Command{
 		execCmd.Stdout = os.Stdout
 		execCmd.Stderr = os.Stderr
 
-		// executing the _cmd
+		// executing the cmd
 		if err := execCmd.Run(); err != nil {
 			return fmt.Errorf("failed to run uv init for %q: %w", projectName, err)
 		}
@@ -51,9 +50,11 @@ var pythonCmd = &cobra.Command{
 		src := "assets/justfile_python"
 		out := filepath.Join(projectName, "justfile")
 
-		if err := copyJustfile(assets, src, out); err != nil {
+		if err := copyEmbFile(assets, src, out); err != nil {
 			return err
 		}
+
+		fmt.Println("\nDone!!")
 
 		return nil
 	},

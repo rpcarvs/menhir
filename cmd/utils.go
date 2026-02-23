@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func copyJustfile(fs embed.FS, srcPath string, outPath string) error {
+func copyEmbFile(fs embed.FS, srcPath string, outPath string) error {
 	data, err := fs.ReadFile(srcPath)
 	if err != nil {
 		return fmt.Errorf("error reading embedded justfile")
