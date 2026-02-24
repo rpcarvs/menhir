@@ -3,6 +3,7 @@ package cmd
 
 import (
 	"embed"
+	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -18,9 +19,14 @@ var rootCmd = &cobra.Command{
 	Long: `The CLI will set a minimal dir structure and copy a
 	corresponding justfile with common recipes for the selected
 	language.`,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		// prints the help message by default
-		cmd.Help()
+		err := cmd.Help()
+		if err != nil {
+			return fmt.Errorf("something went wrong %w", err)
+		}
+
+		return nil
 	},
 }
 
