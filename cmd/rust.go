@@ -40,6 +40,14 @@ var rustCmd = &cobra.Command{
 			return fmt.Errorf("failed to run cargo init for %q: %w", projectName, err)
 		}
 
+		if err := runFazInit(projectName); err != nil {
+			return err
+		}
+
+		if err := appendGitInfoExclude(projectName); err != nil {
+			return err
+		}
+
 		// copying justfile
 		src := "assets/justfile_rust"
 		out := filepath.Join(projectName, "justfile")

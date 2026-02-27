@@ -28,6 +28,17 @@ var goCmd = &cobra.Command{
 			return fmt.Errorf("failed to create project dir %w", err)
 		}
 
+		// running git init
+		gitCmd := exec.Command(
+			"git",
+			"init",
+		)
+		gitCmd.Dir = projectName
+
+		if err := gitCmd.Run(); err != nil {
+			return fmt.Errorf("failed to run git init %w", err)
+		}
+
 		// running go mod init
 		modCmd := exec.Command(
 			"go",
@@ -38,6 +49,14 @@ var goCmd = &cobra.Command{
 
 		if err := modCmd.Run(); err != nil {
 			return fmt.Errorf("failed to run go mod init %w", err)
+		}
+
+		if err := runFazInit(projectName); err != nil {
+			return err
+		}
+
+		if err := appendGitInfoExclude(projectName); err != nil {
+			return err
 		}
 
 		// copying justfile
