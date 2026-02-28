@@ -1,4 +1,4 @@
-module apena
+module menhir
 
 go 1.25.0
 
